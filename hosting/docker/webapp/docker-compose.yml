@@ -88,8 +88,6 @@ services:
     image: postgres:${POSTGRES_IMAGE_TAG:-14}
     restart: ${RESTART_POLICY:-unless-stopped}
     logging: *logging-config
-    ports:
-      - ${POSTGRES_PUBLISH_IP:-127.0.0.1}:5433:5432
     volumes:
       - postgres:/var/lib/postgresql/data/
     networks:
@@ -112,8 +110,6 @@ services:
     image: redis:${REDIS_IMAGE_TAG:-7}
     restart: ${RESTART_POLICY:-unless-stopped}
     logging: *logging-config
-    ports:
-      - ${REDIS_PUBLISH_IP:-127.0.0.1}:6389:6379
     volumes:
       - redis:/data
     networks:
@@ -148,9 +144,6 @@ services:
     image: bitnamilegacy/clickhouse:${CLICKHOUSE_IMAGE_TAG:-latest}
     restart: ${RESTART_POLICY:-unless-stopped}
     logging: *logging-config
-    ports:
-      - ${CLICKHOUSE_PUBLISH_IP:-127.0.0.1}:9123:8123
-      - ${CLICKHOUSE_PUBLISH_IP:-127.0.0.1}:9090:9000
     environment:
       CLICKHOUSE_ADMIN_USER: ${CLICKHOUSE_USER:-default}
       CLICKHOUSE_ADMIN_PASSWORD: ${CLICKHOUSE_PASSWORD:-password}
@@ -184,8 +177,6 @@ services:
     image: registry:${REGISTRY_IMAGE_TAG:-2}
     restart: ${RESTART_POLICY:-unless-stopped}
     logging: *logging-config
-    ports:
-      - ${REGISTRY_PUBLISH_IP:-127.0.0.1}:5000:5000
     networks:
       - webapp
     volumes:
@@ -206,9 +197,6 @@ services:
     image: bitnamilegacy/minio:${MINIO_IMAGE_TAG:-latest}
     restart: ${RESTART_POLICY:-unless-stopped}
     logging: *logging-config
-    ports:
-      - ${MINIO_PUBLISH_IP:-127.0.0.1}:9000:9000
-      - ${MINIO_PUBLISH_IP:-127.0.0.1}:9001:9001
     networks:
       - webapp
     volumes:
