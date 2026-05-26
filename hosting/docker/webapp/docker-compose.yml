@@ -90,31 +90,26 @@ services:
       restart: ${RESTART_POLICY:-unless-stopped}
       logging: *logging-config
       volumes:
-        - postgres_v5:/var/lib/postgresql/data/      # ← rename a v5 (fresh init)
+        - postgres_v6:/var/lib/postgresql/data/      # ← v5 → v6 (fresh init)
       networks:
         - webapp
       command:
         - -c
         - wal_level=logical
         - -c
-        - log_connections=on          # ← NUEVO: loguea cada conexión exitosa
-        - -c
-        - log_disconnections=on       # ← NUEVO: loguea cada desconexión
-        - -c
-        - log_min_messages=debug1     # ← NUEVO: log más verboso
-        - -c
-        - log_error_verbosity=verbose # ← NUEVO: razón completa del error
+        - password_encryption=md5                     # ← NUEVO: guarda passwords como md5
       environment:
         POSTGRES_USER: ${POSTGRES_USER:-postgres}
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
         POSTGRES_DB: ${POSTGRES_DB:-postgres}
+        POSTGRES_INITDB_ARGS: "--auth-host=md5"       # ← NUEVO: pg_hba usa md5
+        POSTGRES_HOST_AUTH_METHOD: "md5"              # ← NUEVO: backup para forzar md5
       healthcheck:
         test: ["CMD", "pg_isready", "-U", "postgres"]
         interval: 10s
         timeout: 5s
         retries: 5
         start_period: 10s
-
   redis:
     image: redis:${REDIS_IMAGE_TAG:-7}
     restart: ${RESTART_POLICY:-unless-stopped}
@@ -224,7 +219,7 @@ services:
 
 volumes:
   clickhouse:
-  postgres_v5:
+  postgres_v6:
   redis:
   shared:
   minio:
