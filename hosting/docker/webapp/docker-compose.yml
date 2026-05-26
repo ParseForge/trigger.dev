@@ -90,7 +90,7 @@ services:
     restart: ${RESTART_POLICY:-unless-stopped}
     logging: *logging-config
     volumes:
-      - postgres:/var/lib/postgresql/data/
+      - postgres_v2:/var/lib/postgresql/data/
     networks:
       - webapp
     command:
@@ -216,7 +216,7 @@ services:
 
 volumes:
   clickhouse:
-  postgres:
+  postgres_v2:
   redis:
   shared:
   minio:
