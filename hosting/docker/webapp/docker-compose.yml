@@ -21,6 +21,7 @@ services:
     networks:
       - webapp
       - supervisor
+      - coolify
     volumes:
       - shared:/home/node/shared
     # Only needed for bootstrap
@@ -227,3 +228,6 @@ networks:
     name: supervisor
   webapp:
     name: webapp
+  coolify:
+    name: coolify
+    external: true
