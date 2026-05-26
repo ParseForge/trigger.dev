@@ -86,26 +86,34 @@ services:
       INTERNAL_OTEL_TRACE_LOGGING_ENABLED: ${INTERNAL_OTEL_TRACE_LOGGING_ENABLED:-0}
 
   postgres:
-    image: postgres:${POSTGRES_IMAGE_TAG:-14}
-    restart: ${RESTART_POLICY:-unless-stopped}
-    logging: *logging-config
-    volumes:
-      - postgres_v4:/var/lib/postgresql/data/
-    networks:
-      - webapp
-    command:
-      - -c
-      - wal_level=logical
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: ${POSTGRES_DB:-postgres}
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
+      image: postgres:${POSTGRES_IMAGE_TAG:-14}
+      restart: ${RESTART_POLICY:-unless-stopped}
+      logging: *logging-config
+      volumes:
+        - postgres_v5:/var/lib/postgresql/data/      # ← rename a v5 (fresh init)
+      networks:
+        - webapp
+      command:
+        - -c
+        - wal_level=logical
+        - -c
+        - log_connections=on          # ← NUEVO: loguea cada conexión exitosa
+        - -c
+        - log_disconnections=on       # ← NUEVO: loguea cada desconexión
+        - -c
+        - log_min_messages=debug1     # ← NUEVO: log más verboso
+        - -c
+        - log_error_verbosity=verbose # ← NUEVO: razón completa del error
+      environment:
+        POSTGRES_USER: ${POSTGRES_USER:-postgres}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+        POSTGRES_DB: ${POSTGRES_DB:-postgres}
+      healthcheck:
+        test: ["CMD", "pg_isready", "-U", "postgres"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+        start_period: 10s
 
   redis:
     image: redis:${REDIS_IMAGE_TAG:-7}
@@ -216,7 +224,7 @@ services:
 
 volumes:
   clickhouse:
-  postgres_v4:
+  postgres_v5:
   redis:
   shared:
   minio:
